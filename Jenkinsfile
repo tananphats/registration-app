@@ -1,45 +1,41 @@
 pipeline {
-    agent { label "Jenkins-Agent" }
-    environment {
-              APP_NAME = "register-app-pipeline"
-    }
+    agent any  // Runs on any available agent
 
     stages {
-        stage("Cleanup Workspace") {
+        stage('Checkout') {
             steps {
-                cleanWs()
+                git 'https://github.com/your-username/your-repo.git'  // Replace with your repo URL
             }
         }
 
-        stage("Checkout from SCM") {
-               steps {
-                   git branch: 'main', credentialsId: 'github', url: 'https://github.com/Ashfaque-9x/gitops-register-app'
-               }
-        }
-
-        stage("Update the Deployment Tags") {
+        stage('Build') {
             steps {
-                sh """
-                   cat deployment.yaml
-                   sed -i 's/${APP_NAME}.*/${APP_NAME}:${IMAGE_TAG}/g' deployment.yaml
-                   cat deployment.yaml
-                """
+                echo "Building the project..."
+                sh 'echo "Simulated build process"'  // Replace with actual build command
             }
         }
 
-        stage("Push the changed deployment file to Git") {
+        stage('Test') {
             steps {
-                sh """
-                   git config --global user.name "Ashfaque-9x"
-                   git config --global user.email "ashfaque.s510@gmail.com"
-                   git add deployment.yaml
-                   git commit -m "Updated Deployment Manifest"
-                """
-                withCredentials([gitUsernamePassword(credentialsId: 'github', gitToolName: 'Default')]) {
-                  sh "git push https://github.com/Ashfaque-9x/gitops-register-app main"
-                }
+                echo "Running tests..."
+                sh 'echo "Simulated test process"'  // Replace with actual test command
             }
         }
-      
+
+        stage('Deploy') {
+            steps {
+                echo "Deploying application..."
+                sh 'echo "Simulated deployment process"'  // Replace with actual deploy command
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Build Successful!"
+        }
+        failure {
+            echo "❌ Build Failed!"
+        }
     }
 }
